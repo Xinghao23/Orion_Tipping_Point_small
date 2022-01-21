@@ -112,6 +112,6 @@ void CalculatePosition() {
 void odom_task(void* param) {
 	while (true) {
 		CalculatePosition();
-		//odomDebug();
+		odomDebug();
 	}
 }

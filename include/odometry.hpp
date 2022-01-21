@@ -1,6 +1,8 @@
 #ifndef _ODOMETRY_HPP_
 #define _ODOMETRY_HPP_
 
+#include "Vector2D.hpp"
+
 double DistCM(int a);
 void CalculatePosition();
 void odom_task(void* param);

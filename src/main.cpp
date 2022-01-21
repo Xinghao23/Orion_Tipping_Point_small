@@ -11,7 +11,8 @@ Motor rightBackMotor(20);
 Motor fourBarLeftMotor(1);
 Motor fourBarRightMotor(8);
 Motor mobileGoalLeftMotor(2);
-Motor mobileGoalRightMotor(7);
+Motor mobileGoalRightMotor(7, true);
+#define MOGO_UP 625
 Motor clawMotor(9);
 Motor ringIntake(3);
 Imu imu(4);
@@ -38,76 +39,62 @@ void competition_initialize() {}
 void autonomous() {}
 
 void opcontrol() {
+
 	mobileGoalLeftMotor.tare_position();
 	mobileGoalRightMotor.tare_position();
-	int mogoState = 0;
+	unsigned int mogoState = 1;
+	bool claw_state = false;
+
 	while (true) {
 		lcd::print(0, "mobileGoalLeftMotor: %f", mobileGoalLeftMotor.get_position());
 		lcd::print(1, "mobileGoalRightMotor: %f", mobileGoalRightMotor.get_position());
-		int rightX = master.get_analog(ANALOG_RIGHT_X);
-		int rightY = master.get_analog(ANALOG_RIGHT_Y);
-		int leftX = master.get_analog(ANALOG_LEFT_X);
-		int leftY = master.get_analog(ANALOG_LEFT_Y);
-		// Drive Motor Control
-		leftFrontMotor = rightY + rightX;
-		leftFrontMiddleMotor = -rightY - rightX;
-		leftBackMiddleMotor = rightY + rightX;
-		leftBackMotor = -rightY - rightX;
-		rightFrontMotor = -rightY + rightX;
-		rightFrontMiddleMotor = rightY - rightX;
-		rightBackMiddleMotor = -rightY + rightX;
-		rightBackMotor = rightY - rightX;
 
+		// Drive Motor Control
+		power_drive(master.get_analog(ANALOG_RIGHT_Y), master.get_analog(ANALOG_RIGHT_X));
 
 		// Chainbar and Bar Motor Control
 		// Lift Motor Control
-	  	fourBarLeftMotor = -leftY;
-		fourBarRightMotor = leftY;
-		// Mogo Motor Control
-		if(master.get_digital_new_press(DIGITAL_DOWN) == 1){
-			if(mogoSensor.get_value() != 1){
-				mogoState = 1;
-			}
-		}
-		else if(master.get_digital_new_press(DIGITAL_UP) == 1){
-			mogoState = 2;
-		}
-		else{
-			if(mogoState == 1){
-				mobileGoalLeftMotor = -127;
-				mobileGoalRightMotor = 127;
+	  	fourBarLeftMotor = -master.get_analog(ANALOG_LEFT_Y);
+		fourBarRightMotor = master.get_analog(ANALOG_LEFT_Y);
 
-				if(mogoSensor.get_value() == 1){
-					mogoState = 3;
-				}
+		// Mogo Motor Control
+		if (master.get_digital_new_press(DIGITAL_R2)) {
+			if (mogoState == 2) mogoState = 1;
+			else mogoState = 2;
+		}
+
+		if (mogoState == 1) {
+			if (mogoSensor.get_value() != 1) {
+				mobileGoalLeftMotor = -70;
+				mobileGoalRightMotor = -70;
 			}
-			else if(mogoState == 2){
-				mobileGoalLeftMotor.move_absolute(1250, 100);
-				mobileGoalRightMotor.move_absolute(-1250, 100);
-			}
-			else if(mogoState == 3){
-				mobileGoalLeftMotor = mobileGoalRightMotor = 0;
+			else {
+				mobileGoalLeftMotor = 0;
+				mobileGoalRightMotor = 0;
 				mobileGoalLeftMotor.tare_position();
 				mobileGoalRightMotor.tare_position();
+				mogoState = 3;
 			}
 		}
-		//Claw Motor Control
-		if(master.get_digital_new_press(DIGITAL_R1) == 1){
-			claw.set_value(1);
+		else if (mogoState == 3) {
+			mobileGoalLeftMotor = 0;
+			mobileGoalRightMotor = 0;
 		}
-		else if(master.get_digital_new_press(DIGITAL_R2) == 1){
-		  claw.set_value(0);
+		else {
+			mobileGoalLeftMotor.move_absolute(MOGO_UP, 100);
+			mobileGoalRightMotor.move_absolute(MOGO_UP + 15, 100);
 		}
 
-		if(master.get_digital(DIGITAL_L1) == 1){
-			ringIntake = -127;
+		//Claw Motor Control
+		if(master.get_digital_new_press(DIGITAL_R1) == 1){
+			claw_state = !claw_state;
+			claw.set_value(claw_state);
 		}
-		else if(master.get_digital(DIGITAL_L2) == 1){
-		  ringIntake = 127;
-		}
-		else{
-			ringIntake = 0;
-		}
+
+		if(master.get_digital(DIGITAL_L1) == 1) ringIntake = -127;
+		else if(master.get_digital(DIGITAL_L2) == 1) ringIntake = 127;
+		else ringIntake = 0;
+
     	delay(20);
 	}
 }

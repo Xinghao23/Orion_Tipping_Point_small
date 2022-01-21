@@ -39,6 +39,7 @@
 #include "PID.hpp"
 #include "Timer.hpp"
 #include "Vector2D.hpp"
+#include "chassis.hpp"
 
 /**
  * You should add more #includes here
