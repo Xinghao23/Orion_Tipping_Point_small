@@ -14,9 +14,18 @@ Motor mobileGoalLeftMotor(2);
 Motor mobileGoalRightMotor(7);
 Motor clawMotor(9);
 Motor ringIntake(3);
+Imu imu(4);
+ADIEncoder leftEncoder(5, 6, false);
+ADIEncoder backEncoder(3, 4, false);
 ADIDigitalOut claw(8);
 ADIDigitalIn mogoSensor(7);
 Controller master(E_CONTROLLER_MASTER);
+
+/*
+ * Odometry Task
+ * Tracks the position of the robot
+*/
+Task odom (odom_task, NULL, TASK_PRIORITY_DEFAULT - 1, TASK_STACK_DEPTH_DEFAULT, "ODOM");
 
 void initialize() {
 	lcd::initialize();
@@ -33,8 +42,8 @@ void opcontrol() {
 	mobileGoalRightMotor.tare_position();
 	int mogoState = 0;
 	while (true) {
-		lcd::print(0, "mobileGoalLeftMotor: %f\n", mobileGoalLeftMotor.get_position());
-		lcd::print(1, "mobileGoalRightMotor: %f\n", mobileGoalRightMotor.get_position());
+		lcd::print(0, "mobileGoalLeftMotor: %f", mobileGoalLeftMotor.get_position());
+		lcd::print(1, "mobileGoalRightMotor: %f", mobileGoalRightMotor.get_position());
 		int rightX = master.get_analog(ANALOG_RIGHT_X);
 		int rightY = master.get_analog(ANALOG_RIGHT_Y);
 		int leftX = master.get_analog(ANALOG_LEFT_X);
@@ -99,6 +108,6 @@ void opcontrol() {
 		else{
 			ringIntake = 0;
 		}
-    delay(20);
+    	delay(20);
 	}
 }

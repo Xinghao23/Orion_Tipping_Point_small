@@ -7,18 +7,18 @@ using namespace std;
 
 // wheels are 200mm circumfrance
 double DistCM(int a) {
-  if (a == 0) return (RightEncoder.get_value() / 360.0 * 20.0);
-  else return (BackEncoder.get_value() / 360.0 * 20.0);
+  if (a == 0) return (leftEncoder.get_value() / 360.0 * 20.0);
+  else return (backEncoder.get_value() / 360.0 * 20.0);
 }
 
 
 double imu_value() {
   double val = (int)(imu.get_rotation() * 100);
-  return val / 100;
+  return val / 100.0f;
 }
 
-double sideR = 21.6;
-double sideB = 11.4;
+double sideR = 1.5;
+double sideB = 7;
 
 Vector2D pastGlobalPosition(0,0);
 Vector2D GlobalPosition(0,0);
@@ -42,14 +42,14 @@ double global_angle_d() {
   return global_angle * 180 / 3.1415;
 }
 
-#define RIGHT 0
+#define LEFT 0
 #define BACK 1
 
 void odomDebug() {
   printf("X = %4.0f, Y = %4.0f, theta = %4.0f\n", GlobalPosition.x, GlobalPosition.y, imu_value());
   //printf("lX = %1.5f, lY = %1.5f, theta = %4yhg.0f\n", localOffset.x, localOffset.y, imu_value());
   //printf("lX = %4.5f, lY = %4.5f, theta = %3.5f\n", localOffset.x, localOffset.y, imu_value());
-  //printf("RE = %4.0f, BE = %4.0f\n", DistCM(RIGHT), DistCM(BACK));
+  //printf("RE = %4.0f, BE = %4.0f\n", DistCM(LEFT), DistCM(BACK));
 }
 
 void CalculatePosition() {
@@ -84,7 +84,7 @@ void CalculatePosition() {
     // imu value with identical radius to the back encoder, this simulates having a front encoder
     localOffset.x = delta_enc[BACK] + (delta_angle * sideB);
 
-    localOffset.y = delta_enc[RIGHT] + (delta_angle * sideR);
+    localOffset.y = delta_enc[LEFT] + (delta_angle * sideR);
 
     // in order to convert the local offset vector to a global offset vector, you need
     // to turn each component of the local position vector into global position vector rotated

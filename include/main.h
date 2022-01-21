@@ -35,7 +35,10 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
-
+#include "odometry.hpp"
+#include "PID.hpp"
+#include "Timer.hpp"
+#include "Vector2D.hpp"
 
 /**
  * You should add more #includes here
@@ -78,21 +81,24 @@ void opcontrol(void);
  */
 //#include <iostream>
 #endif
-extern pros:: Motor leftFrontMotor;
-extern pros:: Motor leftFrontMiddleMotor;
-extern pros:: Motor leftBackMiddleMotor;
-extern pros:: Motor leftBackMotor;
-extern pros:: Motor rightFrontMotor;
-extern pros:: Motor rightFrontMiddleMotor;
-extern pros:: Motor rightBackMiddleMotor;
-extern pros:: Motor rightBackMotor;
-extern pros:: Motor fourBarLeftMotor;
-extern pros:: Motor fourBarRightMotor;
-extern pros:: Motor mobileGoalRightMotor;
-extern pros:: Motor mobileGoalLeftMotor;
-extern pros:: Motor clawMotor;
-extern pros:: Motor ringIntake;
-extern pros:: Controller master;
-extern pros:: ADIDigitalOut claw;
-extern pros:: ADIDigitalIn mogoSensor;
+extern Motor leftFrontMotor;
+extern Motor leftFrontMiddleMotor;
+extern Motor leftBackMiddleMotor;
+extern Motor leftBackMotor;
+extern Motor rightFrontMotor;
+extern Motor rightFrontMiddleMotor;
+extern Motor rightBackMiddleMotor;
+extern Motor rightBackMotor;
+extern Motor fourBarLeftMotor;
+extern Motor fourBarRightMotor;
+extern Motor mobileGoalRightMotor;
+extern Motor mobileGoalLeftMotor;
+extern Motor clawMotor;
+extern Motor ringIntake;
+extern Imu imu;
+extern ADIEncoder leftEncoder;
+extern ADIEncoder backEncoder;
+extern Controller master;
+extern ADIDigitalOut claw;
+extern ADIDigitalIn mogoSensor;
 #endif  // _PROS_MAIN_H_
