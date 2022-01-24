@@ -12,7 +12,7 @@ Motor fourBarLeftMotor(1);
 Motor fourBarRightMotor(8);
 Motor mobileGoalLeftMotor(2);
 Motor mobileGoalRightMotor(7, true);
-#define MOGO_UP 625
+#define MOGO_UP 620
 Motor clawMotor(9);
 Motor ringIntake(3);
 Imu imu(4);
@@ -65,8 +65,8 @@ void opcontrol() {
 
 		if (mogoState == 1) {
 			if (mogoSensor.get_value() != 1) {
-				mobileGoalLeftMotor = -70;
-				mobileGoalRightMotor = -70;
+				mobileGoalLeftMotor = -40;
+				mobileGoalRightMotor = -40;
 			}
 			else {
 				mobileGoalLeftMotor = 0;
