@@ -8,6 +8,9 @@
 #define FUNC_BODY 1
 #define FUNC_COMPLETE 2
 
-void move_to_point(int &step, Vector2D target, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);
+void move_to_point_forward(int &step, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);
+void move_to_point_backward(int &step, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);
+
+void rotate_to_heading(int &step, double heading, double max_power, double timeout, PIDVariables turn_pid_vars);
 
 #endif

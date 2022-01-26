@@ -40,6 +40,7 @@
 #include "Timer.hpp"
 #include "Vector2D.hpp"
 #include "chassis.hpp"
+#include "auto_functions.hpp"
 
 /**
  * You should add more #includes here

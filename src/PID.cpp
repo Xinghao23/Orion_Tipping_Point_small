@@ -60,7 +60,7 @@ double PID::output(double current) {
   // set the error value based on the difference between the target and the current value
   error = target - current;
   // check if the error is within the intergal limit and if it is, calculate the integral
-  if (fabs(error) < integral_limit) {
+  if (fabs(error) < integral_limit && fabs(error) >= 1) {
     integral += error;
   }
   else {

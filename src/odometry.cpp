@@ -17,8 +17,8 @@ double imu_value() {
   return val / 100.0f;
 }
 
-double sideR = 1.5;
-double sideB = 7;
+double sideL = 1.751;
+double sideB = 6.8;
 
 Vector2D pastGlobalPosition(0,0);
 Vector2D GlobalPosition(0,0);
@@ -46,10 +46,10 @@ double global_angle_d() {
 #define BACK 1
 
 void odomDebug() {
-  printf("X = %4.0f, Y = %4.0f, theta = %4.0f\n", GlobalPosition.x, GlobalPosition.y, imu_value());
-  //printf("lX = %1.5f, lY = %1.5f, theta = %4yhg.0f\n", localOffset.x, localOffset.y, imu_value());
+  //printf("X = %4.0f, Y = %4.0f, theta = %4.0f\n", GlobalPosition.x, GlobalPosition.y, imu_value());
+  //printf("lX = %1.5f, lY = %1.5f, theta = %4.0f\n", localOffset.x, localOffset.y, imu_value());
   //printf("lX = %4.5f, lY = %4.5f, theta = %3.5f\n", localOffset.x, localOffset.y, imu_value());
-  //printf("RE = %4.0f, BE = %4.0f\n", DistCM(LEFT), DistCM(BACK));
+  
 }
 
 void CalculatePosition() {
@@ -84,7 +84,9 @@ void CalculatePosition() {
     // imu value with identical radius to the back encoder, this simulates having a front encoder
     localOffset.x = delta_enc[BACK] + (delta_angle * sideB);
 
-    localOffset.y = delta_enc[LEFT] + (delta_angle * sideR);
+    localOffset.y = delta_enc[LEFT] + (delta_angle * sideL);
+
+    printf("LE = %2.2f, VRE = %2.2f, BE = %2.2f, VEB = %2.2f\n", delta_enc[LEFT], (delta_angle * sideL), delta_enc[BACK], (delta_angle * sideB));
 
     // in order to convert the local offset vector to a global offset vector, you need
     // to turn each component of the local position vector into global position vector rotated
@@ -111,7 +113,7 @@ void CalculatePosition() {
 
 void odom_task(void* param) {
 	while (true) {
-		CalculatePosition();
-		odomDebug();
+		  CalculatePosition();
+		  //odomDebug();
 	}
 }

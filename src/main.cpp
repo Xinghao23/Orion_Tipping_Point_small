@@ -16,11 +16,12 @@ Motor mobileGoalRightMotor(7, true);
 Motor clawMotor(9);
 Motor ringIntake(3);
 Imu imu(4);
-ADIEncoder leftEncoder(5, 6, false);
-ADIEncoder backEncoder(3, 4, false);
+ADIEncoder leftEncoder(5, 6, true);
+ADIEncoder backEncoder(3, 4, true);
 ADIDigitalOut claw(8);
 ADIDigitalIn mogoSensor(7);
 Controller master(E_CONTROLLER_MASTER);
+bool auto_complete = false;
 
 /*
  * Odometry Task
@@ -30,13 +31,46 @@ Task odom (odom_task, NULL, TASK_PRIORITY_DEFAULT - 1, TASK_STACK_DEPTH_DEFAULT,
 
 void initialize() {
 	lcd::initialize();
+	while (imu.is_calibrating() == true) {
+
+	}
 }
 
 void disabled() {}
 
 void competition_initialize() {}
 
-void autonomous() {}
+void autonomous() {
+
+	int auto_step = 0;
+	int step = 0;
+
+	while (auto_complete == false) {
+		if (master.get_digital(DIGITAL_B)) break;
+
+		switch(auto_step) {
+			case 0 :
+			move_to_point_forward(step, Vector2D(0, 100), 127, 15000, PIDVariables(4,0.2,20), PIDVariables(2,0,20));
+			if (step == FUNC_COMPLETE) {
+				step = 0;
+				auto_step++;
+			}
+			break;
+			case 1 :
+			move_to_point_backward(step, Vector2D(0, 0), 127, 15000, PIDVariables(4,0.2,20), PIDVariables(2,0,20));
+			if (step == FUNC_COMPLETE) {
+				step = 0;
+				auto_step++;
+			}
+			break;
+			case 2 :
+			auto_complete = true;
+			break;
+		}
+
+		delay(10);
+	}
+}
 
 void opcontrol() {
 
@@ -46,8 +80,14 @@ void opcontrol() {
 	bool claw_state = false;
 
 	while (true) {
+		if (master.get_digital_new_press(DIGITAL_X)) {
+			auto_complete = false;
+			autonomous();
+		}
+
 		lcd::print(0, "mobileGoalLeftMotor: %f", mobileGoalLeftMotor.get_position());
 		lcd::print(1, "mobileGoalRightMotor: %f", mobileGoalRightMotor.get_position());
+		lcd::print(2, "[%3.2f]:x, [%3.2f]:y", GlobalPosition.x, GlobalPosition.y);
 
 		// Drive Motor Control
 		power_drive(master.get_analog(ANALOG_RIGHT_Y), master.get_analog(ANALOG_RIGHT_X));
