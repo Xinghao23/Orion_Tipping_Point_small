@@ -29,7 +29,7 @@ void move_to_point(int &step, int direction, Vector2D target, double max_power, 
 
         power_drive(chassis_y_pid.output(local_current.y), chassis_turn_pid.output(local_current.x) * direction);
 
-        if (error.getLength() > 1.5) exit_timer.reset();
+        if (error.getLength() > 3) exit_timer.reset();
 
         exit_condition = (exit_timer.delta_time() > 250);
 
@@ -60,7 +60,7 @@ void rotate_to_heading(int &step, double heading, double max_power, double timeo
 
         power_drive(0,chassis_turn_pid.output(imu_value()));
 
-        if (fabs(error) > 0.75) exit_timer.reset();
+        if (fabs(error) > 1.5) exit_timer.reset();
         else if (exit_timer.delta_time() > 250) exit_condition = true;
 
         if (exit_condition == true || timeout_timer.delta_time() > timeout) {
@@ -128,6 +128,10 @@ void move_arm(int &arm_state) {
         fourBarLeftMotor.move_absolute(-2000, 100);
         fourBarRightMotor.move_absolute(2000, 100);
         break;
+        case 2 :
+        fourBarLeftMotor.move_absolute(-700, 100);
+        fourBarRightMotor.move_absolute(700, 100);
+        break;
     }
 }
 
@@ -138,6 +142,9 @@ double arm_position() {
 void move_intake(int &intake_state) {
     if (intake_state == 1) {
         ringIntake = -127;
+    }
+    else if (intake_state == 2) {
+        ringIntake = 127;
     }
     else {
         ringIntake = 0;
