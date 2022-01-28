@@ -13,12 +13,20 @@ double DistCM(int a) {
 
 
 double imu_value() {
-  double val = (int)(imu.get_rotation() * 100);
+  double val = (int)((imu.get_rotation() + starting_t) * 100);
   return val / 100.0f;
 }
 
 double sideL = 1.751;
 double sideB = 6.8;
+// x robot offset 15.7
+// y robot offset 19.5
+
+// x jig offset 22.7
+// y jig offset 9.1
+
+// total x offset 38.4
+// total y offset 28.6
 
 Vector2D pastGlobalPosition(0,0);
 Vector2D GlobalPosition(0,0);
@@ -37,6 +45,11 @@ double average_angle = 0;
 double delta_angle = 0;
 double past_global_angle = 0;
 double global_angle = 0;
+
+// starting offsets
+double starting_x = 38.4;
+double starting_y = 28.6;
+double starting_t = 270;
 
 double global_angle_d() {
   return global_angle * 180 / 3.1415;
@@ -105,13 +118,17 @@ void CalculatePosition() {
     GlobalPosition = pastGlobalPosition + globalOffset;
   }
   else {
-    GlobalPosition.x = 0;
-    GlobalPosition.y = 0;
+    GlobalPosition.x = starting_x;
+    GlobalPosition.y = starting_y;
   }
 }
 
 
 void odom_task(void* param) {
+  GlobalPosition.x = starting_x;
+  GlobalPosition.y = starting_y;
+  printf("IMU CALIBRATING");
+  while (imu.is_calibrating() == true) {}
 	while (true) {
 		  CalculatePosition();
 		  //odomDebug();

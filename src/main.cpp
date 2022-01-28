@@ -12,7 +12,6 @@ Motor fourBarLeftMotor(1);
 Motor fourBarRightMotor(8);
 Motor mobileGoalLeftMotor(2);
 Motor mobileGoalRightMotor(7, true);
-#define MOGO_UP 620
 Motor clawMotor(9);
 Motor ringIntake(3);
 Imu imu(4);
@@ -20,6 +19,7 @@ ADIEncoder leftEncoder(5, 6, true);
 ADIEncoder backEncoder(3, 4, true);
 ADIDigitalOut claw(8);
 ADIDigitalIn mogoSensor(7);
+ADIDigitalIn armSensor(2);
 Controller master(E_CONTROLLER_MASTER);
 bool auto_complete = false;
 
@@ -42,31 +42,12 @@ void competition_initialize() {}
 
 void autonomous() {
 
-	int auto_step = 0;
-	int step = 0;
+	set_up_auto();
 
 	while (auto_complete == false) {
 		if (master.get_digital(DIGITAL_B)) break;
 
-		switch(auto_step) {
-			case 0 :
-			move_to_point_forward(step, Vector2D(0, 100), 127, 15000, PIDVariables(4,0.2,20), PIDVariables(2,0,20));
-			if (step == FUNC_COMPLETE) {
-				step = 0;
-				auto_step++;
-			}
-			break;
-			case 1 :
-			move_to_point_backward(step, Vector2D(0, 0), 127, 15000, PIDVariables(4,0.2,20), PIDVariables(2,0,20));
-			if (step == FUNC_COMPLETE) {
-				step = 0;
-				auto_step++;
-			}
-			break;
-			case 2 :
-			auto_complete = true;
-			break;
-		}
+		Skills();
 
 		delay(10);
 	}
@@ -76,7 +57,7 @@ void opcontrol() {
 
 	mobileGoalLeftMotor.tare_position();
 	mobileGoalRightMotor.tare_position();
-	unsigned int mogoState = 1;
+	unsigned int mogoState = 3;
 	bool claw_state = false;
 
 	while (true) {

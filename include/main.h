@@ -41,6 +41,7 @@
 #include "Vector2D.hpp"
 #include "chassis.hpp"
 #include "auto_functions.hpp"
+#include "auto.hpp"
 
 /**
  * You should add more #includes here
@@ -83,6 +84,12 @@ void opcontrol(void);
  */
 //#include <iostream>
 #endif
+
+#define MOGO_UP 620
+#define MOGO_DOWN 1
+#define MOGO_RAISE 2
+#define MOGO_IDLE 3
+
 extern Motor leftFrontMotor;
 extern Motor leftFrontMiddleMotor;
 extern Motor leftBackMiddleMotor;
@@ -103,4 +110,5 @@ extern ADIEncoder backEncoder;
 extern Controller master;
 extern ADIDigitalOut claw;
 extern ADIDigitalIn mogoSensor;
+extern ADIDigitalIn armSensor;
 #endif  // _PROS_MAIN_H_
