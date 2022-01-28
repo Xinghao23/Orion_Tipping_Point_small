@@ -8,12 +8,9 @@ Timer exit_timer;
 Timer timeout_timer;
 
 void move_to_point(int &step, int direction, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars) {
-
-    double heading = (direction == FORWARD) ? global_angle : (global_angle);
-
     Vector2D error = target - GlobalPosition;
-    Vector2D local_current = GlobalPosition.getHeadingBased(heading);
-    Vector2D local_target = target.getHeadingBased(heading);
+    Vector2D local_current = GlobalPosition.getHeadingBased(global_angle);
+    Vector2D local_target = target.getHeadingBased(global_angle);
     bool exit_condition = false;
 
     switch (step) {
