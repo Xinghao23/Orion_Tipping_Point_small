@@ -13,8 +13,10 @@
 
 double in_to_cm(double in);
 
+void move_to_point(int &step, int direction, Vector2D target, double accuracy, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);
 void move_to_point(int &step, int direction, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);
 
+void rotate_to_heading(int &step, double heading, double accuracy, double max_power, double timeout, PIDVariables turn_pid_vars);
 void rotate_to_heading(int &step, double heading, double max_power, double timeout, PIDVariables turn_pid_vars);
 
 void move_mogo(int &mogo_state);

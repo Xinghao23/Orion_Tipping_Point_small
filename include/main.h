@@ -42,6 +42,7 @@
 #include "chassis.hpp"
 #include "auto_functions.hpp"
 #include "auto.hpp"
+#include "screen.hpp"
 
 /**
  * You should add more #includes here

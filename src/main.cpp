@@ -68,7 +68,7 @@ void opcontrol() {
 
 		lcd::print(0, "mobileGoalLeftMotor: %f", mobileGoalLeftMotor.get_position());
 		lcd::print(1, "mobileGoalRightMotor: %f", mobileGoalRightMotor.get_position());
-		lcd::print(2, "[%3.2f]:x, [%3.2f]:y", GlobalPosition.x, GlobalPosition.y);
+		lcd::print(2, "[%3.2f]:x, [%3.2f]:y, [%3.2f]:h", GlobalPosition.x, GlobalPosition.y, imu_value());
 
 		// Drive Motor Control
 		power_drive(master.get_analog(ANALOG_RIGHT_Y), master.get_analog(ANALOG_RIGHT_X));

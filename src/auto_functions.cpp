@@ -7,7 +7,7 @@ PID chassis_turn_pid;
 Timer exit_timer;
 Timer timeout_timer;
 
-void move_to_point(int &step, int direction, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars) {
+void move_to_point(int &step, int direction, Vector2D target, double accuracy, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars) {
     Vector2D error = target - GlobalPosition;
     Vector2D local_current = GlobalPosition.getHeadingBased(global_angle);
     Vector2D local_target = target.getHeadingBased(global_angle);
@@ -26,7 +26,7 @@ void move_to_point(int &step, int direction, Vector2D target, double max_power, 
 
         power_drive(chassis_y_pid.output(local_current.y), chassis_turn_pid.output(local_current.x) * direction);
 
-        if (error.getLength() > 3) exit_timer.reset();
+        if (error.getLength() > accuracy) exit_timer.reset();
 
         exit_condition = (exit_timer.delta_time() > 250);
 
@@ -42,7 +42,12 @@ void move_to_point(int &step, int direction, Vector2D target, double max_power, 
 }
 
 
-void rotate_to_heading(int &step, double heading, double max_power, double timeout, PIDVariables turn_pid_vars) {
+void move_to_point(int &step, int direction, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars) {
+    move_to_point(step, direction, target, 3, max_power, timeout, y_pid_vars, turn_pid_vars);
+}
+
+
+void rotate_to_heading(int &step, double heading, double accuracy, double max_power, double timeout, PIDVariables turn_pid_vars) {
     double error = heading - imu_value();
     bool exit_condition = false;
 
@@ -69,6 +74,11 @@ void rotate_to_heading(int &step, double heading, double max_power, double timeo
         power_drive(0,0);
         break;
     }
+}
+
+
+void rotate_to_heading(int &step, double heading, double max_power, double timeout, PIDVariables turn_pid_vars) {
+    rotate_to_heading(step, heading, 1.5, max_power, timeout, turn_pid_vars);
 }
 
 

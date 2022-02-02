@@ -7,6 +7,7 @@ int arm_state;
 int intake_state;
 bool claw_state;
 int auto_step;
+int auto_part;
 
 Timer auto_timer_1;
 
@@ -15,7 +16,13 @@ void change_auto_step() {
     chassis_step = FUNC_SETUP;
 }
 
+void change_auto_part() {
+    auto_step = 0;
+    chassis_step = FUNC_SETUP;
+}
+
 void set_up_auto() {
+    auto_part = 0;
     auto_step = 0;
     chassis_step = FUNC_SETUP;
     arm_state = 0;
@@ -25,11 +32,7 @@ void set_up_auto() {
     auto_timer_1.reset();
 }
 
-void Skills() {
-    move_mogo(mogo_state);
-    move_arm(arm_state);
-    move_intake(intake_state);
-    set_claw(claw_state);
+bool SkillsPt1() {
     switch (auto_step) {
         case 0 :
         arm_state = 1;
@@ -53,13 +56,23 @@ void Skills() {
         break;
         case 4 :
         rotate_to_heading(chassis_step, 90, 90, 5000, PIDVariables(5.5, 0.2, 10));
-        if (chassis_step == FUNC_COMPLETE) change_auto_step();
+        if (chassis_step == FUNC_COMPLETE) {
+            change_auto_part();
+            return true;
+        }
         break;
-        case 5 :
+    }
+
+    return false;
+}
+
+bool SkillsPt2() {
+    switch (auto_step) {
+        case 0 :
         move_to_point(chassis_step, FORWARD, Vector2D(245, 108), 90, 5000, PIDVariables(3, 0.25, 10), PIDVariables(6, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) change_auto_step();
         break;
-        case 6 :
+        case 1 :
         intake_state = 0;
         rotate_to_heading(chassis_step, 135, 90, 2000, PIDVariables(5.5, 0.2, 10));
         if (chassis_step == FUNC_COMPLETE) {
@@ -67,42 +80,86 @@ void Skills() {
             auto_timer_1.reset();
         }
         break;
-        case 7 :
+        case 2 :
         if (auto_timer_1.delta_time() > 500) mogo_state = MOGO_DOWN;
         move_to_point(chassis_step, FORWARD, Vector2D(310, 37), 80, 2000, PIDVariables(3, 0.25, 10), PIDVariables(5, 0.1, 20));
-        if (chassis_step == FUNC_COMPLETE) change_auto_step();
+        if (chassis_step == FUNC_COMPLETE) {
+            change_auto_part();
+            return true;
+        }
         break;
-        case 8 :
+    }
+
+    return false;
+}
+
+bool SkillsPt3() {
+    switch (auto_step) {
+        case 0 :
         rotate_to_heading(chassis_step, 188, 90, 5000, PIDVariables(4.4, 0.2, 10));
         if (chassis_step == FUNC_COMPLETE) {
             auto_timer_1.reset();
             change_auto_step();
         }
         break;
-        case 9 :
+        case 1 :
         arm_state = 0;
         if (auto_timer_1.delta_time() > 750) mogo_state = MOGO_RAISE;
         move_to_point(chassis_step, BACKWARD, Vector2D(330, 96), 80, 2000, PIDVariables(3, 0.25, 10), PIDVariables(5, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) change_auto_step();
         break;
-        case 10 :
+        case 2 :
         intake_state = 1;
         rotate_to_heading(chassis_step, 105, 90, 2000, PIDVariables(5.5, 0.2, 10));
         if (chassis_step == FUNC_COMPLETE) change_auto_step();
         break;
-        case 11 :
+        case 3 :
         move_to_point(chassis_step, FORWARD, Vector2D(274, 90), 80, 2000, PIDVariables(3, 0.25, 10), PIDVariables(5, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) change_auto_step();
         break;
-        case 12 :
+        case 4 :
         claw_state = true;
         arm_state = 1;
         rotate_to_heading(chassis_step, 0, 30, 2000, PIDVariables(5.5, 0.2, 10));
-        if (chassis_step == FUNC_COMPLETE) change_auto_step();
+        if (chassis_step == FUNC_COMPLETE) {
+            change_auto_part();
+            return true;
+        }
         break;
-        case 13 :
+    }
+
+    return false;
+}
+
+bool SkillsPt4() {
+    switch (auto_step) {
+        case 0 :
         //230y 10ft x
         move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(120), 230), 80, 2000, PIDVariables(3, 0.25, 10), PIDVariables(5, 0.1, 20));
+        break;
+    }
+
+    return false;
+}
+
+
+void Skills() {
+    move_mogo(mogo_state);
+    move_arm(arm_state);
+    move_intake(intake_state);
+    set_claw(claw_state);
+    switch (auto_part) {
+        case 0 :
+        if (SkillsPt1() == true) auto_part++;
+        break;
+        case 1 :
+        if (SkillsPt2() == true) auto_part++;
+        break;
+        case 2 :
+        if (SkillsPt3() == true) auto_part++;
+        break;
+        case 3 :
+        if (SkillsPt4() == true) auto_part++;
         break;
     }
 }
