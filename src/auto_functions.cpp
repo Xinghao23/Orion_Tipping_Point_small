@@ -62,7 +62,7 @@ void rotate_to_heading(int &step, double heading, double accuracy, double max_po
 
         power_drive(0,chassis_turn_pid.output(imu_value()));
 
-        if (fabs(error) > 1.5) exit_timer.reset();
+        if (fabs(error) > accuracy) exit_timer.reset();
         else if (exit_timer.delta_time() > 250) exit_condition = true;
 
         if (exit_condition == true || timeout_timer.delta_time() > timeout) {
@@ -138,6 +138,18 @@ void move_arm(int &arm_state) {
         case 2 :
         fourBarLeftMotor.move_absolute(-700, 100);
         fourBarRightMotor.move_absolute(700, 100);
+        break;
+        case 4 :
+        if (armSensor.get_value() != 1) {
+            fourBarLeftMotor = 127;
+            fourBarRightMotor = -127;
+        }
+        else {
+            fourBarLeftMotor = 0;
+            fourBarRightMotor = 0;
+            fourBarLeftMotor.tare_position();
+            fourBarRightMotor.tare_position();
+        }
         break;
     }
 }
