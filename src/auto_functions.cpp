@@ -28,7 +28,9 @@ void move_to_point(int &step, int direction, Vector2D target, double accuracy, d
 
         if (error.getLength() > accuracy) exit_timer.reset();
 
-        exit_condition = (exit_timer.delta_time() > 250);
+        if (exit_timer.delta_time() > 250) {
+            exit_condition = true;
+        }
 
         if (exit_condition == true || timeout_timer.delta_time() > timeout) {
             step = FUNC_COMPLETE;
@@ -100,6 +102,19 @@ void move_mogo(int &mogo_state) {
 		mobileGoalLeftMotor = 0;
 		mobileGoalRightMotor = 0;
 	}
+    else if (mogo_state == 4) {
+        if (mogoSensor.get_value() != 1) {
+            mobileGoalLeftMotor = -127;
+            mobileGoalRightMotor = -127;
+        }
+        else {
+            mobileGoalLeftMotor = -2;
+            mobileGoalRightMotor = -2;
+            mobileGoalLeftMotor.tare_position();
+            mobileGoalRightMotor.tare_position();
+            mogo_state = 3;
+        }
+    }
 	else {
 		mobileGoalLeftMotor.move_absolute(MOGO_UP, 100);
 		mobileGoalRightMotor.move_absolute(MOGO_UP + 15, 100);

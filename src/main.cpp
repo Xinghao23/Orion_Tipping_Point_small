@@ -58,6 +58,7 @@ void opcontrol() {
 	mobileGoalLeftMotor.tare_position();
 	mobileGoalRightMotor.tare_position();
 	unsigned int mogoState = 3;
+	bool mogo_started = false;
 	bool claw_state = false;
 
 	while (true) {
@@ -80,8 +81,14 @@ void opcontrol() {
 
 		// Mogo Motor Control
 		if (master.get_digital_new_press(DIGITAL_R2)) {
-			if (mogoState == 2) mogoState = 1;
-			else mogoState = 2;
+			if (mogo_started == false) {
+				mogo_started = true;
+				mogo_state = 1;
+			}
+			else {
+				if (mogoState == 2) mogoState = 1;
+				else mogoState = 2;
+			}
 		}
 
 		if (mogoState == 1) {
