@@ -86,7 +86,7 @@ void opcontrol(void);
 //#include <iostream>
 #endif
 
-#define MOGO_UP 610
+#define MOGO_UP 650
 #define MOGO_DOWN 1
 #define MOGO_RAISE 2
 #define MOGO_IDLE 3

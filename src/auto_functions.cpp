@@ -112,12 +112,15 @@ void move_mogo(int &mogo_state) {
             mobileGoalRightMotor = -2;
             mobileGoalLeftMotor.tare_position();
             mobileGoalRightMotor.tare_position();
-            mogo_state = 3;
         }
+    }
+    else if (mogo_state == 5) {
+        mobileGoalLeftMotor.move_absolute(MOGO_UP, 100);
+		mobileGoalRightMotor.move_absolute(MOGO_UP + 20, 100);
     }
 	else {
 		mobileGoalLeftMotor.move_absolute(MOGO_UP, 100);
-		mobileGoalRightMotor.move_absolute(MOGO_UP + 15, 100);
+		mobileGoalRightMotor.move_absolute(MOGO_UP + 20, 100);
 	}
 }
 
@@ -154,17 +157,48 @@ void move_arm(int &arm_state) {
         fourBarLeftMotor.move_absolute(-700, 100);
         fourBarRightMotor.move_absolute(700, 100);
         break;
-        case 4 :
-        if (armSensor.get_value() != 1) {
-            fourBarLeftMotor = 127;
-            fourBarRightMotor = -127;
+        case 3 :
+        fourBarLeftMotor.move_absolute(-1200, 30);
+        fourBarRightMotor.move_absolute(1200, 30);
+        break;
+        case ARM_WAITING :
+        break;
+    }
+}
+
+void stack_mogo(int &arm_step) {
+    switch(arm_step) {
+        case FUNC_SETUP :
+        arm_step = FUNC_BODY;
+        arm_state = ARM_WAITING;
+        break;
+        case FUNC_BODY :
+        // ensure that the arm is up 
+        if (arm_position() < 1900) {
+            fourBarLeftMotor.move_absolute(-2000, 100);
+            fourBarRightMotor.move_absolute(2000, 100);
+        }
+        else arm_step = FUNC_BODY_2;
+        break;
+        case FUNC_BODY_2 :
+        // arm down slowly 
+        if (arm_position() > 1300) {
+            fourBarLeftMotor.move_absolute(-1200, 30);
+            fourBarRightMotor.move_absolute(1200, 30);
         }
         else {
-            fourBarLeftMotor = 0;
-            fourBarRightMotor = 0;
-            fourBarLeftMotor.tare_position();
-            fourBarRightMotor.tare_position();
+            claw_state = false;
+            arm_state = FUNC_BODY_3;
         }
+        break;
+        case FUNC_BODY_3 :
+        if (arm_position() < 1900) {
+            fourBarLeftMotor.move_absolute(-2000, 100);
+            fourBarRightMotor.move_absolute(2000, 100);
+        }
+        else arm_step = FUNC_COMPLETE;
+        break;
+        case FUNC_COMPLETE :
         break;
     }
 }

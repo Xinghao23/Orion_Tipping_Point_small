@@ -6,10 +6,15 @@
 
 #define FUNC_SETUP 0
 #define FUNC_BODY 1
-#define FUNC_COMPLETE 2
+#define FUNC_BODY_2 2
+#define FUNC_BODY_3 3
+#define FUNC_BODY_4 4
+#define FUNC_COMPLETE 5
 
 #define FORWARD 1
 #define BACKWARD -1
+
+#define ARM_WAITING 4
 
 double in_to_cm(double in);
 
@@ -24,7 +29,7 @@ void move_mogo(int &mogo_state);
 double mogo_position();
 
 void move_arm(int &arm_state);
-
+void stack_mogo(int &arm_step);
 double arm_position();
 
 void move_intake(int &intake_state);

@@ -83,7 +83,7 @@ void opcontrol() {
 		if (master.get_digital_new_press(DIGITAL_R2)) {
 			if (mogo_started == false) {
 				mogo_started = true;
-				mogo_state = 1;
+				mogoState = 4;
 			}
 			else {
 				if (mogoState == 2) mogoState = 1;
@@ -92,7 +92,7 @@ void opcontrol() {
 		}
 
 		if (mogoState == 1) {
-			if (mogoSensor.get_value() != 1) {
+			if (mogoSensor.get_value() == 0) {
 				mobileGoalLeftMotor = -40;
 				mobileGoalRightMotor = -40;
 			}
@@ -108,9 +108,21 @@ void opcontrol() {
 			mobileGoalLeftMotor = 0;
 			mobileGoalRightMotor = 0;
 		}
+		else if (mogoState == 4) {
+			if (mogoSensor.get_value() == 0) {
+				mobileGoalLeftMotor = -100;
+				mobileGoalRightMotor = -100;
+			}
+			else {
+				mobileGoalLeftMotor = -2;
+				mobileGoalRightMotor = -2;
+				mobileGoalLeftMotor.tare_position();
+				mobileGoalRightMotor.tare_position();
+			}
+		}
 		else {
 			mobileGoalLeftMotor.move_absolute(MOGO_UP, 100);
-			mobileGoalRightMotor.move_absolute(MOGO_UP + 15, 100);
+			mobileGoalRightMotor.move_absolute(MOGO_UP + 20, 100);
 		}
 
 		//Claw Motor Control
