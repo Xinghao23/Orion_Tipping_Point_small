@@ -20,5 +20,6 @@ bool SkillsPt1();
 bool SkillsPt2();
 bool SkillsPt3();
 bool SkillsPt4();
+bool SkillsPt5();
 
 #endif

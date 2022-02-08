@@ -17,6 +17,7 @@
 #define ARM_WAITING 4
 
 double in_to_cm(double in);
+double imu_heading();
 
 void move_to_point(int &step, int direction, Vector2D target, double accuracy, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);
 void move_to_point(int &step, int direction, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars);

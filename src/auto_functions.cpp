@@ -1,6 +1,15 @@
 #include "main.h"
 #include "auto_functions.hpp"
 
+double imu_heading() {
+    double val = (int)((imu.get_heading() + starting_t) * 100);
+    return val / 100.0f;
+}
+
+double imu_radian_heading() {
+    return (imu_heading() / 180 * 3.1415);
+}
+
 PID chassis_y_pid;
 PID chassis_turn_pid;
 
@@ -9,8 +18,8 @@ Timer timeout_timer;
 
 void move_to_point(int &step, int direction, Vector2D target, double accuracy, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars) {
     Vector2D error = target - GlobalPosition;
-    Vector2D local_current = GlobalPosition.getHeadingBased(global_angle);
-    Vector2D local_target = target.getHeadingBased(global_angle);
+    Vector2D local_current = GlobalPosition.getHeadingBased(imu_radian_heading());
+    Vector2D local_target = target.getHeadingBased(imu_radian_heading());
     bool exit_condition = false;
 
     switch (step) {
@@ -139,12 +148,12 @@ void move_arm(int &arm_state) {
     switch (arm_state) {
         case 0 :
         if (armSensor.get_value() != 1) {
-            fourBarLeftMotor = 40;
-            fourBarRightMotor = -40;
+            fourBarLeftMotor = 80;
+            fourBarRightMotor = -80;
         }
         else {
-            fourBarLeftMotor = 0;
-            fourBarRightMotor = 0;
+            fourBarLeftMotor = 2;
+            fourBarRightMotor = -2;
             fourBarLeftMotor.tare_position();
             fourBarRightMotor.tare_position();
         }
@@ -182,21 +191,23 @@ void stack_mogo(int &arm_step) {
         break;
         case FUNC_BODY_2 :
         // arm down slowly 
-        if (arm_position() > 1300) {
-            fourBarLeftMotor.move_absolute(-1200, 30);
-            fourBarRightMotor.move_absolute(1200, 30);
+        if (arm_position() > 1050) {
+            fourBarLeftMotor.move_absolute(-1000, 60);
+            fourBarRightMotor.move_absolute(1000, 60);
         }
         else {
             claw_state = false;
-            arm_state = FUNC_BODY_3;
+            arm_step = FUNC_BODY_3;
         }
         break;
         case FUNC_BODY_3 :
         if (arm_position() < 1900) {
-            fourBarLeftMotor.move_absolute(-2000, 100);
-            fourBarRightMotor.move_absolute(2000, 100);
+            fourBarLeftMotor.move_absolute(-2000, 70);
+            fourBarRightMotor.move_absolute(2000, 70);
         }
-        else arm_step = FUNC_COMPLETE;
+        else {
+            arm_step = FUNC_COMPLETE;
+        }
         break;
         case FUNC_COMPLETE :
         break;

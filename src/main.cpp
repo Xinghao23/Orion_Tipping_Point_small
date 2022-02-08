@@ -60,7 +60,7 @@ void opcontrol() {
 	unsigned int mogoState = 3;
 	bool mogo_started = false;
 	bool claw_state = false;
-
+	while (imu.is_calibrating() == true) {}
 	while (true) {
 		if (master.get_digital_new_press(DIGITAL_X)) {
 			auto_complete = false;
