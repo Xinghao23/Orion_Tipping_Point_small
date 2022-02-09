@@ -54,7 +54,7 @@ void move_to_point(int &step, int direction, Vector2D target, double accuracy, d
 
 
 void move_to_point(int &step, int direction, Vector2D target, double max_power, double timeout, PIDVariables y_pid_vars, PIDVariables turn_pid_vars) {
-    move_to_point(step, direction, target, 3, max_power, timeout, y_pid_vars, turn_pid_vars);
+    move_to_point(step, direction, target, 2, max_power, timeout, y_pid_vars, turn_pid_vars);
 }
 
 
@@ -148,8 +148,8 @@ void move_arm(int &arm_state) {
     switch (arm_state) {
         case 0 :
         if (armSensor.get_value() != 1) {
-            fourBarLeftMotor = 80;
-            fourBarRightMotor = -80;
+            fourBarLeftMotor = 127;
+            fourBarRightMotor = -127;
         }
         else {
             fourBarLeftMotor = 2;
@@ -167,8 +167,8 @@ void move_arm(int &arm_state) {
         fourBarRightMotor.move_absolute(700, 100);
         break;
         case 3 :
-        fourBarLeftMotor.move_absolute(-1200, 30);
-        fourBarRightMotor.move_absolute(1200, 30);
+        fourBarLeftMotor.move_absolute(-900, 30);
+        fourBarRightMotor.move_absolute(900, 30);
         break;
         case ARM_WAITING :
         break;
@@ -192,8 +192,8 @@ void stack_mogo(int &arm_step) {
         case FUNC_BODY_2 :
         // arm down slowly 
         if (arm_position() > 1050) {
-            fourBarLeftMotor.move_absolute(-1000, 60);
-            fourBarRightMotor.move_absolute(1000, 60);
+            fourBarLeftMotor.move_absolute(-900, 60);
+            fourBarRightMotor.move_absolute(900, 60);
         }
         else {
             claw_state = false;
