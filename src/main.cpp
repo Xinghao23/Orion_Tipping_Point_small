@@ -31,6 +31,7 @@ Task odom (odom_task, NULL, TASK_PRIORITY_DEFAULT - 1, TASK_STACK_DEPTH_DEFAULT,
 
 void initialize() {
 	lcd::initialize();
+	imu.reset();
 	while (imu.is_calibrating() == true) {
 
 	}
