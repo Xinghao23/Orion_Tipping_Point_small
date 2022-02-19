@@ -20,6 +20,7 @@ void move_to_point(int &step, int direction, Vector2D target, double accuracy, d
     Vector2D error = target - GlobalPosition;
     Vector2D local_current = GlobalPosition.getHeadingBased(imu_radian_heading());
     Vector2D local_target = target.getHeadingBased(imu_radian_heading());
+    Vector2D local_error = local_target - local_current;
     bool exit_condition = false;
 
     switch (step) {
@@ -30,6 +31,7 @@ void move_to_point(int &step, int direction, Vector2D target, double accuracy, d
         step = FUNC_BODY;
         break;
         case FUNC_BODY :
+        printf("lTx:[%3.2f], lTy:[%3.2f], lCx:[%3.2f], lCy:[%3.2f], lEx:[%3.2f], lEy:[%3.2f]\n", local_target.x, local_target.y, local_current.x, local_current.y, local_error.x, local_error.y);
         chassis_y_pid.set_PID_variables(local_target.y, max_power, -max_power, 15);
         chassis_turn_pid.set_PID_variables(local_target.x, max_power, -max_power, 2);
 
@@ -191,7 +193,7 @@ void stack_mogo(int &arm_step) {
         break;
         case FUNC_BODY_2 :
         // arm down slowly 
-        if (arm_position() > 1050) {
+        if (arm_position() > 930) {
             fourBarLeftMotor.move_absolute(-900, 60);
             fourBarRightMotor.move_absolute(900, 60);
         }
@@ -218,9 +220,39 @@ double arm_position() {
     return fourBarRightMotor.get_position();
 }
 
+bool intake_jammed = false;
+Timer intake_timer;
+
+bool intake_is_running() {
+    if (fabs(ringIntake.get_actual_velocity()) < 2) {
+        return false;
+    } 
+    else {
+        return true;
+    }
+}
+
 void move_intake(int &intake_state) {
-    if (intake_state == 1) {
+    if (intake_state == 1 && intake_jammed == false) {
         ringIntake = -127;
+
+        if (intake_is_running() == false) {
+            intake_jammed = true;
+            intake_timer.reset();
+        }
+    }
+    else if (intake_jammed == true) {
+        if (intake_timer.delta_time() < 500) {
+            if (intake_is_running() == true) {
+                intake_jammed =  false;
+            }
+        }
+        else if (intake_timer.delta_time() >= 500 && intake_timer.delta_time() < 750) {
+            ringIntake = 127;
+        }
+        else {
+            intake_jammed = false;
+        }
     }
     else if (intake_state == 2) {
         ringIntake = 127;

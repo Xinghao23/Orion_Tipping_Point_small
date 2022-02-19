@@ -99,7 +99,7 @@ void CalculatePosition() {
 
     localOffset.y = delta_enc[LEFT] + (delta_angle * sideL);
 
-    printf("LE = %2.2f, VRE = %2.2f, BE = %2.2f, VEB = %2.2f\n", delta_enc[LEFT], (delta_angle * sideL), delta_enc[BACK], (delta_angle * sideB));
+    //printf("LE = %2.2f, VRE = %2.2f, BE = %2.2f, VEB = %2.2f\n", delta_enc[LEFT], (delta_angle * sideL), delta_enc[BACK], (delta_angle * sideB));
 
     // in order to convert the local offset vector to a global offset vector, you need
     // to turn each component of the local position vector into global position vector rotated
