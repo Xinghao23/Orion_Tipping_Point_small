@@ -265,6 +265,9 @@ bool SkillsPt5() {
     return false;
 }
 
+double error2;
+double error3;
+
 // stack B2
 bool SkillsPt6() {
     switch(auto_step) {
@@ -279,12 +282,13 @@ bool SkillsPt6() {
         if (chassis_step == FUNC_COMPLETE) {
             change_auto_step();
             mogo_state = MOGO_DOWN;
+            arm_state = 0;
             auto_timer_1.reset();
         }
         break;
         case 2 :
-        double error = (90 - imu_value());
-        if (GlobalPosition.x < in_to_cm(80)) power_drive(50, error * 2);
+        error2 = (90 - imu_value());
+        if (GlobalPosition.x < in_to_cm(80)) power_drive(50, error2 * 2);
         else {
             power_drive(0,0);
             change_auto_step();
@@ -292,8 +296,8 @@ bool SkillsPt6() {
         }
         break;
         case 3 :
-        double error = (-90 - imu_value());
-        if (GlobalPosition.x > in_to_cm(68)) power_drive(50, error * 2);
+        error3 = (-90 - imu_value());
+        if (GlobalPosition.x > in_to_cm(68)) power_drive(50, error3 * 2);
         else {
             power_drive(0,0);
             change_auto_step();
@@ -302,7 +306,7 @@ bool SkillsPt6() {
         }
         break;
         case 4 :
-        move_to_point(chassis_step, BACKWARD, Vector2D(in_to_cm(76), in_to_cm(90)), 1, 60, 7000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
+        move_to_point(chassis_step, BACKWARD, Vector2D(in_to_cm(76), in_to_cm(90)), 20, 60, 7000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) {
             change_auto_step();
         }
@@ -314,7 +318,7 @@ bool SkillsPt6() {
         }
         break;
         case 6 :
-        stack_mogo(arm_step);
+        stack_mogo2(arm_step);
         if (GlobalPosition.y < in_to_cm(109)) power_drive(60, 0);
         else power_drive(0,0);
         if (arm_step == FUNC_BODY_3) {
@@ -333,7 +337,7 @@ bool SkillsPt6() {
         }
         break;
         case 8 :
-        move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(22), in_to_cm(105)), 1, 60, 7000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
+        move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(18), in_to_cm(110)), 10, 60, 7000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) {
             change_auto_step();
             claw_state = true;
@@ -341,13 +345,13 @@ bool SkillsPt6() {
         }
         break;
         case 9 :
-        move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(52), in_to_cm(40)), 1, 60, 15000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
+        move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(52), in_to_cm(40)), 10, 80, 7000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) {
             change_auto_step();
         }
         break;
         case 10 :
-        move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(76), in_to_cm(40)), 1, 60, 15000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
+        move_to_point(chassis_step, FORWARD, Vector2D(in_to_cm(76), in_to_cm(40)), 10, 80, 7000, PIDVariables(2.5, 0.175, 10), PIDVariables(3, 0.1, 20));
         if (chassis_step == FUNC_COMPLETE) {
             change_auto_step();
         }
@@ -380,7 +384,7 @@ void Skills() {
         if (SkillsPt2() == true) auto_part++;
         break;
         case 2 :
-        if (SkillsPt3() == true) auto_part++;
+        //sif (SkillsPt3() == true) auto_part++;
         break;
         case 3 :
         if (SkillsPt4() == true) auto_part++;

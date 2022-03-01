@@ -31,6 +31,7 @@ double mogo_position();
 
 void move_arm(int &arm_state);
 void stack_mogo(int &arm_step);
+void stack_mogo2(int &arm_step);
 double arm_position();
 
 void move_intake(int &intake_state);

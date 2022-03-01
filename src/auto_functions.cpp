@@ -216,6 +216,46 @@ void stack_mogo(int &arm_step) {
     }
 }
 
+
+void stack_mogo2(int &arm_step) {
+    switch(arm_step) {
+        case FUNC_SETUP :
+        arm_step = FUNC_BODY;
+        arm_state = ARM_WAITING;
+        break;
+        case FUNC_BODY :
+        // ensure that the arm is up 
+        if (arm_position() < 1900) {
+            fourBarLeftMotor.move_absolute(-2000, 100);
+            fourBarRightMotor.move_absolute(2000, 100);
+        }
+        else arm_step = FUNC_BODY_2;
+        break;
+        case FUNC_BODY_2 :
+        // arm down slowly 
+        if (arm_position() > 930) {
+            fourBarLeftMotor.move_absolute(-1100, 60);
+            fourBarRightMotor.move_absolute(1100, 60);
+        }
+        else {
+            claw_state = false;
+            arm_step = FUNC_BODY_3;
+        }
+        break;
+        case FUNC_BODY_3 :
+        if (arm_position() < 1900) {
+            fourBarLeftMotor.move_absolute(-2000, 70);
+            fourBarRightMotor.move_absolute(2000, 70);
+        }
+        else {
+            arm_step = FUNC_COMPLETE;
+        }
+        break;
+        case FUNC_COMPLETE :
+        break;
+    }
+}
+
 double arm_position() {
     return fourBarRightMotor.get_position();
 }
